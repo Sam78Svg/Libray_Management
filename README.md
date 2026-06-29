@@ -1,6 +1,6 @@
 # 📚 Library Management System API (LiApi)
 
-A RESTful Library Management System API built with **Node.js**, **Express.js**, and **MongoDB Atlas** using the official **MongoDB Node.js Driver** (without Mongoose).
+A RESTful Library Management System API built with **Node.js**, **Express.js**, and **MongoDB Atlas** using **mongoose**.
 
 This project provides a complete backend for managing books, users, borrowing, returns, and library administration.
 
@@ -115,7 +115,7 @@ JWT_SECRET=your_secret_key
 Start the server
 
 ```bash
-npm start
+npm run server
 ```
 
 Development mode
@@ -208,8 +208,6 @@ The project includes a sample collection containing a diverse catalog of books f
 # 🔒 Authentication
 
 Protected routes use **JSON Web Tokens (JWT)**.
-
-```
 
 ---
 
