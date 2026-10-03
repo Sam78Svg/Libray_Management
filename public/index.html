@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f4ef">
+  <title>LiApi — Library API guide</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #192620;
+      --muted: #6c7972;
+      --line: #e4e9e4;
+      --paper: #fff;
+      --canvas: #f5f6f1;
+      --green: #176b4a;
+      --green-dark: #124c37;
+      --green-pale: #e9f3ed;
+      --orange: #bd6b3e;
+      --code: #14241e;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 max(28px, calc((100vw - 1240px) / 2));
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 750;
+      letter-spacing: -.04em;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--green);
+      color: white;
+      font-size: 18px;
+    }
+
+    .top-note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .layout {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 218px minmax(0, 1fr);
+      gap: 54px;
+      padding: 48px 28px 90px;
+    }
+
+    aside {
+      position: sticky;
+      top: 26px;
+      align-self: start;
+    }
+
+    .nav-label {
+      margin: 22px 0 8px;
+      color: #909a94;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .nav-label:first-child {
+      margin-top: 3px;
+    }
+
+    nav a {
+      display: block;
+      padding: 8px 10px;
+      color: #66736b;
+      font-size: 13px;
+      text-decoration: none;
+      border-radius: 7px;
+    }
+
+    nav a:hover {
+      background: var(--green-pale);
+      color: var(--green-dark);
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background: #45a779;
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px #e1f1e8;
+    }
+
+    h1 {
+      margin: 15px 0 14px;
+      font-size: clamp(36px, 5vw, 55px);
+      line-height: 1.03;
+      letter-spacing: -.06em;
+    }
+
+    .intro {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .intro strong {
+      color: var(--ink);
+      font-weight: 650;
+    }
+
+    .base-url {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 680px;
+      margin: 24px 0 44px;
+      padding: 13px 15px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .base-url span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .base-url code {
+      color: var(--green-dark);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .section {
+      margin-top: 44px;
+      scroll-margin-top: 24px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 21px;
+      letter-spacing: -.035em;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .table-head,
+    .endpoint {
+      display: grid;
+      grid-template-columns: 90px minmax(200px, 1fr) minmax(145px, .8fr) 105px;
+      align-items: center;
+      gap: 13px;
+      padding: 13px 16px;
+    }
+
+    .table-head {
+      color: #909a94;
+      background: #fafbf9;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .endpoint {
+      min-height: 52px;
+      border-top: 1px solid #edf0ec;
+      font-size: 12px;
+    }
+
+    .method {
+      display: inline-flex;
+      justify-content: center;
+      min-width: 54px;
+      padding: 5px 7px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .get {
+      color: #176b4a;
+      background: #e9f3ed;
+    }
+
+    .post {
+      color: #8b5a17;
+      background: #fff3dc;
+    }
+
+    .patch {
+      color: #405e9a;
+      background: #eaf0fb;
+    }
+
+    .delete {
+      color: #a54839;
+      background: #fbece9;
+    }
+
+    .endpoint code {
+      color: #25362e;
+      font-size: 12px;
+      font-weight: 650;
+      overflow-wrap: anywhere;
+    }
+
+    .endpoint .desc {
+      color: var(--muted);
+    }
+
+    .access {
+      justify-self: start;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      color: #68756d;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .access.public {
+      color: var(--green);
+      border-color: #cfe3d6;
+      background: #f4faf6;
+    }
+
+    .access.librarian {
+      color: #785594;
+      border-color: #e4d9ef;
+      background: #faf6fd;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .flow-card {
+      min-height: 133px;
+      padding: 17px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 11px;
+    }
+
+    .step {
+      color: var(--orange);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .1em;
+    }
+
+    .flow-card h3 {
+      margin: 12px 0 7px;
+      font-size: 14px;
+    }
+
+    .flow-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .code-card {
+      margin-top: 13px;
+      color: #e9f1eb;
+      background: var(--code);
+      border-radius: 11px;
+      overflow: hidden;
+    }
+
+    .code-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 15px;
+      border-bottom: 1px solid #2b3b33;
+      color: #9eaea4;
+      font-size: 11px;
+    }
+
+    .code-top button {
+      padding: 5px 9px;
+      border: 1px solid #45554c;
+      border-radius: 5px;
+      color: #e6eee8;
+      background: transparent;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow-x: auto;
+      font: 12px/1.7 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    .callout {
+      margin-top: 15px;
+      padding: 13px 15px;
+      border-left: 3px solid #c9905f;
+      border-radius: 0 7px 7px 0;
+      color: #665442;
+      background: #fbf2e9;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .callout code {
+      font-size: 11px;
+    }
+
+    .response-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .response {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--paper);
+    }
+
+    .response strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .response p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    footer {
+      margin-top: 55px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: #89938c;
+      font-size: 11px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding-top: 30px;
+      }
+
+      aside {
+        position: static;
+        overflow-x: auto;
+      }
+
+      nav {
+        display: flex;
+        gap: 3px;
+        white-space: nowrap;
+      }
+
+      .nav-label {
+        display: none;
+      }
+
+      nav a {
+        padding: 8px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        height: 58px;
+        padding: 0 18px;
+      }
+
+      .top-note {
+        font-size: 11px;
+      }
+
+      .layout {
+        padding: 26px 17px 55px;
+      }
+
+      .table-head {
+        display: none;
+      }
+
+      .endpoint {
+        grid-template-columns: 58px minmax(0, 1fr) auto;
+        gap: 9px;
+        padding: 12px;
+      }
+
+      .endpoint .desc {
+        grid-column: 2 / 4;
+        grid-row: 2;
+      }
+
+      .endpoint .access {
+        grid-column: 3;
+        grid-row: 1;
+      }
+
+      .flow,
+      .response-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">L</span><span>LiApi <span style="color:#839087;font-weight:500">/
+            developer guide</span></span></div>
+      <span class="top-note">Library Management API · v1</span>
+    </header>
+    <div class="layout">
+      <aside>
+        <nav aria-label="Guide navigation">
+          <div class="nav-label">Get started</div>
+          <a href="#overview">Overview</a>
+          <a href="#setup">Setup</a>
+          <a href="#authentication">Authentication</a>
+          <div class="nav-label">Reference</div>
+          <a href="#books">Books</a>
+          <a href="#members">Member borrowing</a>
+          <a href="#librarians">Librarian actions</a>
+          <a href="#responses">Responses & errors</a>
+          <a href="#examples">Examples</a>
+        </nav>
+      </aside>
+      <main>
+        <section id="overview">
+          <div class="eyebrow"><span class="live-dot"></span> REST API · JSON</div>
+          <h1>Your library,<br>connected.</h1>
+          <p class="intro">A practical guide to the Library Management API. Browse the public catalog, register a member
+            account, then use your access token to request books. <strong>Librarians manage the catalog and approve or
+              return loans.</strong></p>
+          <div class="base-url"><span>API base URL</span><code id="base-url"></code></div>
+        </section>
+
+        <section class="section" id="setup">
+          <div class="section-heading">
+            <h2>Local setup</h2>
+            <p>Required environment variables before starting the server.</p>
+          </div>
+          <div class="code-card">
+            <div class="code-top"><span>.env</span><button type="button" data-copy="env-example">Copy</button></div>
+            <pre id="env-example"></pre>
+          </div>
+          <div class="callout">The app reads <code>JWT_SECRET</code>, <code>MONGO_URI</code>,
+            <code>LIBRARIAN_EMAIL</code>, and <code>LIBRARIAN_PASSWORD</code> on startup. <code>JWT_SECRET</code> must
+            be at least 32 characters long.
+          </div>
+        </section>
+
+        <section class="section" id="authentication">
+          <div class="section-heading">
+            <h2>Authentication</h2>
+            <p>Send the token in the Authorization header.</p>
+          </div>
+          <div class="flow">
+            <article class="flow-card"><span class="step">01 / ACCOUNT</span>
+              <h3>Register or sign in</h3>
+              <p>Register creates a member account. Librarian accounts are configured by the server owner.</p>
+            </article>
+            <article class="flow-card"><span class="step">02 / TOKEN</span>
+              <h3>Keep the access token</h3>
+              <p>Use the token from the response for every protected request.</p>
+            </article>
+            <article class="flow-card"><span class="step">03 / REQUEST</span>
+              <h3>Call a protected route</h3>
+              <p>Add <code>Authorization: Bearer &lt;token&gt;</code> to the request headers.</p>
+            </article>
+          </div>
+          <div class="code-card">
+            <div class="code-top"><span>Register a member account · cURL</span><button type="button"
+                data-copy="register-example">Copy</button></div>
+            <pre id="register-example"></pre>
+          </div>
+          <div class="code-card">
+            <div class="code-top"><span>Sign in · cURL</span><button type="button"
+                data-copy="login-example">Copy</button></div>
+            <pre id="login-example"></pre>
+          </div>
+          <div class="callout">The server returns a signed JWT token. Store it securely and never expose a librarian
+            token in a browser or public client.</div>
+        </section>
+
+        <section class="section" id="books">
+          <div class="section-heading">
+            <h2>Books</h2>
+            <p>Catalog reads are public. Create, edit, and delete require the librarian role.</p>
+          </div>
+          <div class="panel">
+            <div class="table-head"><span>Method</span><span>Endpoint</span><span>What it does</span><span>Access</span>
+            </div>
+            <div class="endpoint"><span class="method get">GET</span><code>/books</code><span class="desc">List and
+                search books</span><span class="access public">Public</span></div>
+            <div class="endpoint"><span class="method get">GET</span><code>/books/:id</code><span class="desc">Get one
+                book</span><span class="access public">Public</span></div>
+            <div class="endpoint"><span class="method post">POST</span><code>/books</code><span class="desc">Add a
+                book</span><span class="access librarian">Librarian</span></div>
+            <div class="endpoint"><span class="method patch">PATCH</span><code>/books/:id</code><span
+                class="desc">Update book details or copies</span><span class="access librarian">Librarian</span></div>
+            <div class="endpoint"><span class="method delete">DELETE</span><code>/books/:id</code><span
+                class="desc">Remove a book</span><span class="access librarian">Librarian</span></div>
+          </div>
+          <div class="code-card">
+            <div class="code-top"><span>Search, filter, paginate · cURL</span><button type="button"
+                data-copy="books-example">Copy</button></div>
+            <pre id="books-example"></pre>
+          </div>
+          <p class="intro" style="font-size:13px;margin-top:12px">List options: <code>search</code> matches title,
+            author, and ISBN; <code>genre</code> filters by a single genre value; <code>page</code> and
+            <code>limit</code> paginate (limit max: 100).
+          </p>
+        </section>
+
+        <section class="section" id="members">
+          <div class="section-heading">
+            <h2>Member borrowing</h2>
+            <p>Requests stay pending until a librarian decides.</p>
+          </div>
+          <div class="panel">
+            <div class="table-head"><span>Method</span><span>Endpoint</span><span>What it does</span><span>Access</span>
+            </div>
+            <div class="endpoint"><span class="method get">GET</span><code>/api/auth/me</code><span class="desc">Read
+                your profile</span><span class="access">Signed in</span></div>
+            <div class="endpoint"><span class="method get">GET</span><code>/api/cart</code><span class="desc">View your
+                cart</span><span class="access">Member</span></div>
+            <div class="endpoint"><span class="method post">POST</span><code>/api/cart/items</code><span
+                class="desc">Add a book using bookId</span><span class="access">Member</span></div>
+            <div class="endpoint"><span class="method delete">DELETE</span><code>/api/cart/items/:bookId</code><span
+                class="desc">Remove a cart item</span><span class="access">Member</span></div>
+            <div class="endpoint"><span class="method post">POST</span><code>/api/borrow-requests</code><span
+                class="desc">Send cart to librarian</span><span class="access">Member</span></div>
+            <div class="endpoint"><span class="method get">GET</span><code>/api/borrow-requests</code><span
+                class="desc">View requests / loans</span><span class="access">Signed in</span></div>
+          </div>
+          <div class="code-card">
+            <div class="code-top"><span>Add to cart, then submit a borrow request · cURL</span><button type="button"
+                data-copy="borrow-example">Copy</button></div>
+            <pre id="borrow-example"></pre>
+          </div>
+          <div class="callout">Submitting a cart creates pending requests linked to both the member and each book, then
+            clears the cart. Approval checks stock and sets a 14-day due date. Librarians mark approved loans returned.
+          </div>
+        </section>
+
+        <section class="section" id="librarians">
+          <div class="section-heading">
+            <h2>Librarian actions</h2>
+            <p>Use a librarian token from the configured librarian account.</p>
+          </div>
+          <div class="panel">
+            <div class="table-head"><span>Method</span><span>Endpoint</span><span>What it does</span><span>Access</span>
+            </div>
+            <div class="endpoint"><span class="method get">GET</span><code>/api/borrow-requests</code><span
+                class="desc">Review all requests</span><span class="access librarian">Librarian</span></div>
+            <div class="endpoint"><span
+                class="method patch">PATCH</span><code>/api/borrow-requests/:id/decision</code><span
+                class="desc">Approve or reject</span><span class="access librarian">Librarian</span></div>
+            <div class="endpoint"><span
+                class="method patch">PATCH</span><code>/api/borrow-requests/:id/return</code><span class="desc">Mark a
+                loan returned</span><span class="access librarian">Librarian</span></div>
+          </div>
+          <div class="code-card">
+            <div class="code-top"><span>Approve a request · cURL</span><button type="button"
+                data-copy="approve-example">Copy</button></div>
+            <pre id="approve-example"></pre>
+          </div>
+        </section>
+
+        <section class="section" id="responses">
+          <div class="section-heading">
+            <h2>Responses & errors</h2>
+            <p>All API responses use JSON unless a request succeeds with HTTP 204.</p>
+          </div>
+          <div class="response-grid">
+            <article class="response"><strong>200 / 201 · Success</strong>
+              <p>Successful reads and updates return the resource. Created accounts, books, and borrow requests return
+                201.</p>
+            </article>
+            <article class="response"><strong>400 / 404 · Request issue</strong>
+              <p>Malformed input or IDs return 400. A valid ID with no matching record returns 404.</p>
+            </article>
+            <article class="response"><strong>401 / 403 · Access denied</strong>
+              <p>Missing or invalid token returns 401. A valid account without the required role returns 403.</p>
+            </article>
+            <article class="response"><strong>409 · Conflict</strong>
+              <p>Duplicate entries, unavailable stock, or an invalid request-state transition return 409.</p>
+            </article>
+          </div>
+          <div class="code-card">
+            <div class="code-top"><span>Librarian creates a book · cURL</span><button type="button"
+                data-copy="create-book-example">Copy</button></div>
+            <pre id="create-book-example"></pre>
+          </div>
+        </section>
+
+        <section class="section" id="examples">
+          <div class="section-heading">
+            <h2>Examples in different languages & Postman</h2>
+            <p>Use the same API contract in browser code, Python, Java, or Postman.</p>
+          </div>
+
+          <div class="code-card">
+            <div class="code-top"><span>Postman flow</span><button type="button"
+                data-copy="postman-example">Copy</button></div>
+            <pre id="postman-example"></pre>
+          </div>
+
+          <div class="code-card">
+            <div class="code-top"><span>JavaScript (fetch)</span><button type="button"
+                data-copy="fetch-example">Copy</button></div>
+            <pre id="fetch-example"></pre>
+          </div>
+
+          <div class="code-card">
+            <div class="code-top"><span>Python (requests)</span><button type="button"
+                data-copy="python-example">Copy</button></div>
+            <pre id="python-example"></pre>
+          </div>
+
+          <div class="code-card">
+            <div class="code-top"><span>Java (HttpClient)</span><button type="button"
+                data-copy="java-example">Copy</button></div>
+            <pre id="java-example"></pre>
+          </div>
+
+          <div class="callout">For POST, PATCH, and DELETE requests, set <code>Content-Type: application/json</code>.
+            For protected routes, include <code>Authorization: Bearer &lt;token&gt;</code> in the headers.</div>
+        </section>
+
+        <footer>LiApi · Node.js · Express · MongoDB · Requests and loans are linked to their member and book records.
+        </footer>
+      </main>
+    </div>
+  </div>
+  <script>
+    const base = window.location.origin;
+    document.getElementById("base-url").textContent = base;
+    const examples = {
+      "env-example": `PORT=5000\nMONGO_URI=mongodb://127.0.0.1:27017/library\nJWT_SECRET=your_super_long_random_secret_here_min_32_chars\nJWT_EXPIRES_IN=1d\nLIBRARIAN_NAME=Library Librarian\nLIBRARIAN_EMAIL=lib23@library.com\nLIBRARIAN_PASSWORD=lab@232323`,
+      "register-example": `curl -X POST ${base}/api/auth/register \\\n  -H "Content-Type: application/json" \\\n  -d '{"name":"Avery Reader","email":"avery@example.com","password":"safe-password"}'`,
+      "login-example": `curl -X POST ${base}/api/auth/login \\\n  -H "Content-Type: application/json" \\\n  -d '{"email":"avery@example.com","password":"safe-password"}'`,
+      "books-example": `curl "${base}/books?search=history&genre=History&page=1&limit=20"`,
+      "borrow-example": `# Replace TOKEN with the access token from register or login,\n# and BOOK_ID with an ID returned by GET /books.\ncurl -X POST ${base}/api/cart/items \\\n  -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" \\\n  -d '{"bookId":"BOOK_ID"}'\n\ncurl -X POST ${base}/api/borrow-requests \\\n  -H "Authorization: Bearer TOKEN"`,
+      "approve-example": `curl -X PATCH ${base}/api/borrow-requests/REQUEST_ID/decision \\\n  -H "Authorization: Bearer LIBRARIAN_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"decision":"approve"}'`,
+      "create-book-example": `curl -X POST ${base}/books \\n  -H "Authorization: Bearer LIBRARIAN_TOKEN" \\n  -H "Content-Type: application/json" \\n  -d '{"title":"The Example Book","author":"A. Writer","genre":"History","totalCopies":4}'`,
+      "postman-example": `1. Create a request in Postman.\n2. Set method + URL: POST http://localhost:5000/api/auth/login\n3. Add header: Content-Type: application/json\n4. Add raw body: {"email":"avery@example.com","password":"safe-password"}\n5. Copy the returned token and use it as: Authorization: Bearer <token>\n6. Repeat for protected routes like GET /api/auth/me or GET /api/cart`,
+      "fetch-example": `const response = await fetch("http://localhost:5000/books?search=history&page=1&limit=10");\nconst data = await response.json();\nconsole.log(data);\n\nconst authResponse = await fetch("http://localhost:5000/api/auth/me", {\n  headers: { Authorization: "Bearer <token>" }\n});\nconsole.log(await authResponse.json());`,
+      "python-example": `import requests\n\nresp = requests.get("http://localhost:5000/books", params={"search": "history", "page": 1, "limit": 10})\nprint(resp.json())\n\nheaders = {"Authorization": "Bearer <token>"}\nprofile = requests.get("http://localhost:5000/api/auth/me", headers=headers)\nprint(profile.json())`,
+      "java-example": `HttpRequest request = HttpRequest.newBuilder()\n    .uri(URI.create("http://localhost:5000/books"))\n    .header("Content-Type", "application/json")\n    .build();\n\nHttpResponse<String> response = HttpClient.newHttpClient()\n    .send(request, HttpResponse.BodyHandlers.ofString());\n\nSystem.out.println(response.body());`
+    };
+    for (const [id, example] of Object.entries(examples)) {
+      document.getElementById(id).textContent = example;
+    }
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(examples[button.dataset.copy]);
+        button.textContent = "Copied";
+        window.setTimeout(() => { button.textContent = "Copy"; }, 1200);
+      });
+    });
+  </script>
+</body>
+
+</html>
